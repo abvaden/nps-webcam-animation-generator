@@ -279,7 +279,7 @@ app.get('gifs/schedule', async (c) => {
 		dateValue = dateParam;
 	} else {
 		const now = new Date(); // Use current date
-		dateValue = `${now.getUTCFullYear()}-${now.getUTCMonth().toFixed(0).padStart(2, '0')}-${now.getUTCDate().toFixed(0).padStart(2, '0')}`;
+		dateValue = `${now.getUTCFullYear()}-${now.getUTCMonth().toFixed(0).padStart(2, '0')}-${(now.getUTCDate() + 1).toFixed(0).padStart(2, '0')}`;
 	}
 
 	try {
