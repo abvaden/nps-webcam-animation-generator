@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  AWS Lambda function for webcam GIF generation
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 900  # 15 minutes - maximum for Lambda
+    MemorySize: 1024
+    Runtime: dotnet8
+
+Resources:
+  GifGeneratorFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/
+      Handler: aws-lambda-gif-generator::AWSLambdaGifGenerator.Function::FunctionHandler
+      Runtime: dotnet8
+      Architectures:
+        - x86_64
+      MemorySize: 1024
+      Timeout: 900
+      Layers:
+        - arn:aws:lambda:us-east-2:422960223207:layer:ffmpeg:1
+      Events:
+        ScheduledEvent:
+          Type: Schedule
+          Properties:
+            Schedule: rate(5 minutes)
+            Description: "Trigger GIF generation every 5 minutes"
+            Enabled: true
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  GifGeneratorFunction:
+    Description: "GIF Generator Lambda Function ARN"
+    Value: !GetAtt GifGeneratorFunction.Arn
+  GifGeneratorFunctionIamRole:
+    Description: "Implicit IAM Role created for GIF Generator function"
+    Value: !GetAtt GifGeneratorFunctionRole.Arn

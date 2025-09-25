@@ -1,0 +1,24 @@
+{
+    "success": true,
+    "count": 1,
+    "gifs": [
+        {
+            "id": 1,
+            "webcam_id": 1,
+            "reference_id": "1_hourly_20250919_12",
+            "gif_type": "hourly",
+            "scheduled_time": "2025-09-19T12:05:00.000Z",
+            "image_list": [
+                "images/romo/alpine_visitor_center/1758282641.jpg",
+                "images/romo/alpine_visitor_center/1758282761.jpg",
+                "images/romo/alpine_visitor_center/1758282881.jpg",
+                "images/romo/alpine_visitor_center/1758283001.jpg",
+                "images/romo/alpine_visitor_center/1758283121.jpg"
+            ],
+            "status": "pending",
+            "created_at": "2025-09-19 12:59:51",
+            "processed_at": null,
+            "error_message": null
+        }
+    ]
+}

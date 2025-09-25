@@ -1,0 +1,69 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "nps-webcam-animation-generator",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-09-06",
+	"observability": {
+		"enabled": true
+	},
+	"triggers": {
+		"crons": ["*/1 * * * *"]
+	},
+	"r2_buckets": [
+		{
+			"binding": "STORAGE_BUCKET",
+			"bucket_name": "nps-webcam-animations",
+			"preview_bucket_name": "nps-webcam-animations",
+		}
+	],
+	"d1_databases": [
+		{
+			"binding": "WEBCAM_DB",
+			"database_name": "nps-webcam-animations",
+			"database_id": "4017437e-4406-4792-a53a-c9993cef70ed",
+			"migrations_dir": "migrations"
+		}
+	],
+	"assets": {
+		"directory": "public",
+		"not_found_handling": "404-page",
+		"html_handling": "force-trailing-slash"
+	},
+	"vars": {
+		"R2_PUBLIC_BASE_URL": "https://pub-a039359a5ce64160bdb2ef4b7fbdb703.r2.dev"
+	}
+	/**
+	 * Smart Placement
+	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
+	 */
+	// "placement": { "mode": "smart" }
+	/**
+	 * Bindings
+	 * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
+	 * databases, object storage, AI inference, real-time communication and more.
+	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
+	 */
+	/**
+	 * Environment Variables
+	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variablesf
+	 */
+	// "vars": { "MY_VARIABLE": "production_value" }
+	/**
+	 * Note: Use secrets to store sensitive data.
+	 * https://developers.cloudflare.com/workers/configuration/secrets/
+	 */
+	/**
+	 * Static Assets
+	 * https://developers.cloudflare.com/workers/static-assets/binding/
+	 */
+	// "assets": { "directory": "./public/", "binding": "ASSETS" }
+	/**
+	 * Service Bindings (communicate between multiple Workers)
+	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
+	 */
+	// "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
+}

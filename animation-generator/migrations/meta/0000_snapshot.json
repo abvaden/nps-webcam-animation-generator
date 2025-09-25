@@ -1,0 +1,716 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "6",
+  "dialect": "sqlite",
+  "tables": {
+    "webcams": {
+      "name": "webcams",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "autoincrement": false,
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "enabled": {
+          "default": "(TRUE)",
+          "autoincrement": false,
+          "name": "enabled",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "interval_minutes": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "interval_minutes",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "location": {
+          "autoincrement": false,
+          "name": "location",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "national_park": {
+          "autoincrement": false,
+          "name": "national_park",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "timezone": {
+          "default": "'America/Denver'",
+          "autoincrement": false,
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_image_hash": {
+          "autoincrement": false,
+          "name": "last_image_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_active_at": {
+          "autoincrement": false,
+          "name": "last_active_at",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "updated_at",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lat_lon": {
+          "autoincrement": false,
+          "name": "lat_lon",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "display_name": {
+          "autoincrement": false,
+          "name": "display_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "idx_webcams_enabled": {
+          "name": "idx_webcams_enabled",
+          "columns": [
+            "enabled"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "webcam_diagnostics": {
+      "name": "webcam_diagnostics",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "webcam_id": {
+          "autoincrement": false,
+          "name": "webcam_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "autoincrement": false,
+          "name": "date",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_images_captured": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "total_images_captured",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_images_skipped": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "total_images_skipped",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_r2_calls": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "total_r2_calls",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "average_image_size_bytes": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "average_image_size_bytes",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_bytes_stored": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "total_bytes_stored",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gifs_created": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "gifs_created",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_updated": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "last_updated",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_r2_class_a_calls": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "total_r2_class_a_calls",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_r2_class_b_calls": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "total_r2_class_b_calls",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "estimated_class_a_cost_usd": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "estimated_class_a_cost_usd",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "estimated_class_b_cost_usd": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "estimated_class_b_cost_usd",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "estimated_total_r2_cost_usd": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "estimated_total_r2_cost_usd",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "idx_webcam_diagnostics_date": {
+          "name": "idx_webcam_diagnostics_date",
+          "columns": [
+            "webcam_id",
+            "date"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "webcam_diagnostics_webcam_id_webcams_id_fk": {
+          "name": "webcam_diagnostics_webcam_id_webcams_id_fk",
+          "tableFrom": "webcam_diagnostics",
+          "tableTo": "webcams",
+          "columnsFrom": [
+            "webcam_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "webcam_errors": {
+      "name": "webcam_errors",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "webcam_id": {
+          "autoincrement": false,
+          "name": "webcam_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "error_type": {
+          "autoincrement": false,
+          "name": "error_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "error_message": {
+          "autoincrement": false,
+          "name": "error_message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "error_details": {
+          "autoincrement": false,
+          "name": "error_details",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "occurred_at": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "occurred_at",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "resolved": {
+          "default": "(FALSE)",
+          "autoincrement": false,
+          "name": "resolved",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "idx_webcam_errors_webcam_resolved": {
+          "name": "idx_webcam_errors_webcam_resolved",
+          "columns": [
+            "webcam_id",
+            "resolved"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "webcam_errors_webcam_id_webcams_id_fk": {
+          "name": "webcam_errors_webcam_id_webcams_id_fk",
+          "tableFrom": "webcam_errors",
+          "tableTo": "webcams",
+          "columnsFrom": [
+            "webcam_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "webcam_activity_log": {
+      "name": "webcam_activity_log",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "webcam_id": {
+          "autoincrement": false,
+          "name": "webcam_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "activity_type": {
+          "autoincrement": false,
+          "name": "activity_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image_hash": {
+          "autoincrement": false,
+          "name": "image_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image_size_bytes": {
+          "autoincrement": false,
+          "name": "image_size_bytes",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "r2_calls_made": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "r2_calls_made",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "details": {
+          "autoincrement": false,
+          "name": "details",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "timestamp": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "timestamp",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "idx_webcam_activity_webcam_timestamp": {
+          "name": "idx_webcam_activity_webcam_timestamp",
+          "columns": [
+            "webcam_id",
+            "timestamp"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "webcam_activity_log_webcam_id_webcams_id_fk": {
+          "name": "webcam_activity_log_webcam_id_webcams_id_fk",
+          "tableFrom": "webcam_activity_log",
+          "tableTo": "webcams",
+          "columnsFrom": [
+            "webcam_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "gif_creation_queue": {
+      "name": "gif_creation_queue",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "webcam_id": {
+          "autoincrement": false,
+          "name": "webcam_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reference_id": {
+          "autoincrement": false,
+          "name": "reference_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gif_type": {
+          "autoincrement": false,
+          "name": "gif_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "scheduled_time": {
+          "autoincrement": false,
+          "name": "scheduled_time",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image_list": {
+          "autoincrement": false,
+          "name": "image_list",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": "'pending'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "processed_at": {
+          "autoincrement": false,
+          "name": "processed_at",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "error_message": {
+          "autoincrement": false,
+          "name": "error_message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_time": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "start_time",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end_time": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "end_time",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gif_storage_key": {
+          "autoincrement": false,
+          "name": "gif_storage_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_key": {
+          "autoincrement": false,
+          "name": "date_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "idx_gif_queue_status_date": {
+          "name": "idx_gif_queue_status_date",
+          "columns": [
+            "status",
+            "date_key"
+          ],
+          "isUnique": false
+        },
+        "idx_gif_queue_date_key": {
+          "name": "idx_gif_queue_date_key",
+          "columns": [
+            "date_key"
+          ],
+          "isUnique": false
+        },
+        "idx_gif_queue_storage_key": {
+          "name": "idx_gif_queue_storage_key",
+          "columns": [
+            "gif_storage_key"
+          ],
+          "isUnique": false
+        },
+        "idx_gif_queue_reference": {
+          "name": "idx_gif_queue_reference",
+          "columns": [
+            "reference_id"
+          ],
+          "isUnique": false
+        },
+        "idx_gif_queue_webcam": {
+          "name": "idx_gif_queue_webcam",
+          "columns": [
+            "webcam_id"
+          ],
+          "isUnique": false
+        },
+        "idx_gif_queue_status_time": {
+          "name": "idx_gif_queue_status_time",
+          "columns": [
+            "status",
+            "scheduled_time"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "gif_creation_queue_webcam_id_webcams_id_fk": {
+          "name": "gif_creation_queue_webcam_id_webcams_id_fk",
+          "tableFrom": "gif_creation_queue",
+          "tableTo": "webcams",
+          "columnsFrom": [
+            "webcam_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "images": {
+      "name": "images",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "webcam_id": {
+          "autoincrement": false,
+          "name": "webcam_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time_stamp": {
+          "autoincrement": false,
+          "name": "time_stamp",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "object_name": {
+          "autoincrement": false,
+          "name": "object_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "images_webcam_id_webcams_id_fk": {
+          "name": "images_webcam_id_webcams_id_fk",
+          "tableFrom": "images",
+          "tableTo": "webcams",
+          "columnsFrom": [
+            "webcam_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "d1_migrations": {
+      "name": "d1_migrations",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "applied_at": {
+          "default": "(current_timestamp)",
+          "autoincrement": false,
+          "name": "applied_at",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

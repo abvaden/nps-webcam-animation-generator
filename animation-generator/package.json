@@ -1,0 +1,30 @@
+{
+	"name": "rmpn-webcam-animation-generator",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"test": "vitest",
+		"cf-typegen": "wrangler types"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.8.19",
+		"@types/gif.js": "^0.2.5",
+		"@types/luxon": "^3.7.1",
+		"@types/suncalc": "^1.9.2",
+		"drizzle-kit": "^0.31.4",
+		"typescript": "^5.5.2",
+		"vitest": "~3.2.0",
+		"wrangler": "^4.38.0"
+	},
+	"dependencies": {
+		"drizzle-orm": "^0.44.5",
+		"gif.js": "^0.2.0",
+		"hono": "^4.9.7",
+		"jpeg-js": "^0.4.4",
+		"luxon": "^3.7.2",
+		"suncalc": "^1.9.0"
+	}
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏔️ National Park Webcam Gallery</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏔️ National Park Webcam Gallery</h1>
+            <p>Explore time-lapse GIFs from webcams across America's National Parks</p>
+        </div>
+
+        <div id="breadcrumb" class="breadcrumb" style="display: none;"></div>
+
+        <div id="content">
+            <div class="loading">Loading parks...</div>
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div id="video-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="modal-nav">
+                <button class="nav-btn prev-btn" title="Previous GIF">‹</button>
+                <div class="video-container">
+                    <video id="modal-video" autoplay loop muted>
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="video-loading">
+                        <div class="loading-spinner"></div>
+                        <p>Loading video...</p>
+                    </div>
+                    <div class="video-error" style="display: none;">
+                        <p>Failed to load video</p>
+                    </div>
+                </div>
+                <button class="nav-btn next-btn" title="Next GIF">›</button>
+            </div>
+            <div class="gif-info">
+                <h3 id="modal-gif-title"></h3>
+                <p id="modal-gif-details"></p>
+                <p id="modal-gif-position"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
