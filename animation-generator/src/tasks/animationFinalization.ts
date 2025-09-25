@@ -44,6 +44,7 @@ export async function prepareAnimationsForPendingQueue(repo: IRepository, now: D
 
 				// Query images table for this webcam within the time range
 				const images = await repo.imageRepository.getImagesForTimeRange(webcam, animation.startTime, animation.endTime);
+				console.log(images.length);
 				const imageKeys = images.map(x => x.objectName);
 
 				// We should calculate the total number of images in the animation / animation based off the fixed framerate of 15 fps and the length of time

@@ -24,7 +24,7 @@
 		{
 			"binding": "WEBCAM_DB",
 			"database_name": "nps-webcam-animations",
-			"database_id": "4017437e-4406-4792-a53a-c9993cef70ed",
+			"database_id": "6664205e-d2a4-4a76-9012-bf9b6c0afa61",
 			"migrations_dir": "migrations"
 		}
 	],
