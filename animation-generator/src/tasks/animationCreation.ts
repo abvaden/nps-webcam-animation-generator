@@ -5,7 +5,7 @@ import { calculateWebcamSolarTimes } from "../logic/solar-calculations";
 import { getLocalDateKeyFromISOString } from "../logic/timezone";
 import { DateTime } from 'luxon';
 import { AnimationQueueRepository } from "@/db/repositories/animation-queue-repository";
-import { WebcamDto } from "@/db/schema";
+import { GifCreationQueue, WebcamDto } from "@/db/schema";
 
 /**
  * Helper function to create a animation entry object
@@ -34,8 +34,15 @@ export function createAnimationEntry(
 		referenceId = `${webcam.id}_${animationType}_${dateStr}`;
 	}
 
+	console.log('referenceId : ' + referenceId);
+
 	// Generate storage key for the animation
-	const storageKey = generateAnimationStorageKey(webcam.nationalPark || 'unknown', webcam.name, animationType, scheduledTime.getTime());
+	const storageKey = generateAnimationStorageKey(
+		webcam.nationalPark || 'unknown',
+		webcam.name,
+		animationType,
+		dateStr,
+		hourStr);
 
 	// Calculate date_key based on webcam timezone
 	const dateKey = getLocalDateKeyFromISOString(scheduledTime.toISOString(), webcam.timezone || 'America/Denver');
@@ -81,18 +88,21 @@ export function createAnimationEntry(
  *  - The full day should start at the same time the sun rise animation starts and end when the sunset animation ends
  *  - The date key value should be the same as the dateString that was provided
  */
-export async function createTodaysAnimations(repo: IRepository, dateString: string): Promise<void> {
+export async function createTodaysAnimations(repo: IRepository, dateString: string): Promise<{ success: boolean, item: AnimationQueueEntry}[]> {
 	const webcams = await repo.webcams.getEnabledWebcams();
 	const animationsToCreate: AnimationQueueEntry[] = [];
+	const summary: { success: boolean, item: AnimationQueueEntry}[] = [];
 
 	// Validate date format (YYYY-MM-DD)
 	const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 	if (!dateRegex.test(dateString))
 		throw new Error('invalid date must be (YYYY-MM-DD)');
 
+	// Utc
 	const now = new Date(`${dateString}T03:00:00Z`);
 
 	console.log(`Creating daily animations for ${now.getUTCFullYear()}-${now.getUTCMonth()}-${now.getUTCDate()}`);
+
 	for (const webcam of webcams) {
 		// Skip webcams without location data
 		if (!webcam.latLon) {
@@ -107,12 +117,17 @@ export async function createTodaysAnimations(repo: IRepository, dateString: stri
 
 
 		// Calculate solar times for "today" in terms of the webcams timezone
-		const webcamNow = DateTime.fromFormat(`${dateString} 03:00:00`, 'yyyy-MM-dd HH:mm:ss')
-		const solarTimes = calculateWebcamSolarTimes(webcam.latLon, webcamNow.toUnixInteger() * 1000);
+		const webcamNow = new Date(new Date(`${dateString}T03:00:00`).toLocaleString("en-US", {timeZone: webcam.timezone}));
+		console.log('Webcam startOfDay Time : ' + webcamNow.toISOString());
+
+		// const webcamNow = DateTime.fromFormat(`${dateString} 03:00:00`, 'yyyy-MM-dd HH:mm:ss').setZone(webcam.timezone);
+		const solarTimes = calculateWebcamSolarTimes(webcam.latLon, webcamNow.valueOf());
 		if (!solarTimes) {
 			console.log(`Could not calculate solar times for ${webcam.name}`);
 			continue;
 		}
+
+
 
 		const sunriseDuration = solarTimes.sunrise - solarTimes.firstLight;
 		const sunsetDuration = solarTimes.lastLight - solarTimes.sunset;
@@ -123,7 +138,6 @@ export async function createTodaysAnimations(repo: IRepository, dateString: stri
 
 		// Generate a sunrise animation (firstLight to sunrise)
 		if (!isNaN(lightStart) && !isNaN(lightEnd)) {
-
 			const sunriseAnimation = createAnimationEntry(
 				webcam,
 				'sunrise',
@@ -197,9 +211,12 @@ export async function createTodaysAnimations(repo: IRepository, dateString: stri
 	if (animationsToCreate.length > 0) {
 		try {
 			for (const animation of animationsToCreate) {
-				if (!await repo.animationQueue.addAnimationsToQueue([animation])) {
+				const didAdd = await repo.animationQueue.addAnimationsToQueue([animation])
+				if (!didAdd) {
 					console.log(`Failed to write animation to db : ${animation.reference_id}`);
 				}
+
+				summary.push({ success: didAdd, item: animation });
 			}
 
 
@@ -218,4 +235,6 @@ export async function createTodaysAnimations(repo: IRepository, dateString: stri
 	}, {} as Record<string, number>);
 
 	console.log(`Animation scheduling summary:`, animationsByType);
+
+	return summary;
 }

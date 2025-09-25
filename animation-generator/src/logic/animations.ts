@@ -23,11 +23,15 @@ export function generateAnimationStorageKey(
   nationalPark: string,
   webcamName: string,
   animationType: AnimationType,
-  timestamp?: number
+  dateStamp: string,
+  hourStr?: string,
 ): string {
-  const ts = timestamp || Date.now();
-  const timestampSeconds = Math.floor(ts / 1000);
-  return `gifs/${nationalPark}/${webcamName}/${animationType}/${timestampSeconds}.mp4`;
+  if (animationType == 'hourly') {
+	return `gifs/${nationalPark}/${webcamName}/${animationType}/${dateStamp}_${hourStr}.mp4`;
+  } else {
+	return `gifs/${nationalPark}/${webcamName}/${animationType}/${dateStamp}.mp4`;
+  }
+
 }
 
 // This function should parse the timestamp in the image keys provided and return a fixed amount of across the entire time range

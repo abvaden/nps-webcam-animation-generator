@@ -3,6 +3,7 @@ import { calculateWebcamSolarTimes, parseLatLon } from './logic/solar-calculatio
 import { Hono } from 'hono';
 import { RepositoryFactory } from '@/db/repositories/index';
 import { cleanupOldAnimations, createTodaysAnimations, prepareAnimationsForPendingQueue, processAllWebcams } from './tasks';
+import { AnimationQueueEntry } from './types';
 
 const app = new Hono<{ Bindings: Env }>();
 (app as any).scheduled = (_event: ScheduledEvent, env: Env, ctx: ExecutionContext) => {
@@ -282,8 +283,9 @@ app.get('gifs/schedule', async (c) => {
 		dateValue = `${now.getUTCFullYear()}-${now.getUTCMonth().toFixed(0).padStart(2, '0')}-${(now.getUTCDate() + 1).toFixed(0).padStart(2, '0')}`;
 	}
 
+	let animationSummary: {success: boolean,item: AnimationQueueEntry }[];
 	try {
-		await createTodaysAnimations(repo, dateValue);
+		animationSummary = await createTodaysAnimations(repo, dateValue);
 		await prepareAnimationsForPendingQueue(repo, new Date());
 	} catch (e) {
 		console.log(e)
@@ -296,7 +298,8 @@ app.get('gifs/schedule', async (c) => {
 
 
 	return c.json({
-		success: true
+		success: true,
+		items: animationSummary
 	});
 });
 
