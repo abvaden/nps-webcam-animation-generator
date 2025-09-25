@@ -57,7 +57,7 @@ public class S3Service
         for (int i = 0; i < imageKeys.Count; i++)
         {
             var imageKey = imageKeys[i];
-            var imageTimestamp = imageKey.Substring(imageKey.LastIndexOf("/"));
+            var imageTimestamp = imageKey.Substring(imageKey.LastIndexOf("/") + 1);
             var tempImagePath = Path.Combine(tempDirectory, $"{imageTimestamp}");
             
             if (await DownloadImageAsync(imageKey, tempImagePath))
@@ -93,7 +93,7 @@ public class S3Service
                 FilePath = filePath,
                 Key = s3Key,
                 DisablePayloadSigning = true,
-                DisableDefaultChecksumValidation = true
+                DisableDefaultChecksumValidation = true,
             });
             
             _logger.LogInformation($"Successfully uploaded GIF: {s3Key}");

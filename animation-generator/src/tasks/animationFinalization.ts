@@ -1,6 +1,6 @@
 import { IRepository } from "../db/repositories";
 import { AnimationType } from "../types";
-import { desampleImageKeys, hasMinimumImages } from "../logic/animations";
+import { interpolateImages, hasMinimumImages } from "../logic/animations";
 
 /**
  * This function will set all of the animations where the status is set to 'waiting_for_images' and the time has passed to 'waiting_for_images'
@@ -49,34 +49,37 @@ export async function prepareAnimationsForPendingQueue(repo: IRepository, now: D
 
 				// We should calculate the total number of images in the animation / animation based off the fixed framerate of 15 fps and the length of time
 				// the animation should play for i.e. animation.totalTime
-				var totalImages = 10; // sample value for now
+				var totalImages: number;
+				console.log(animation.gifType);
 				switch (animation.gifType)
 				{
 					case 'full_day':
-						totalImages = Math.min(10 * 15, imageKeys.length);;
+						totalImages = 10 * 20;
 						break;
 					case 'hourly' :
-						totalImages = Math.min(4 * 15, imageKeys.length);
+						totalImages = 4 * 20;
+						break;
 					case 'sunrise' :
 					case 'sunset' :
-						Math.min(8 * 15, imageKeys.length);
-					case 'on_demand':
+						totalImages = 8 * 20;
+						break;
 					default:
 						totalImages = imageKeys.length;
+						break;
 				}
 
 
 				// Desample the images to get evenly distributed subset
-				const selectedImageKeys = desampleImageKeys(imageKeys, totalImages);
+				const selectedImages = interpolateImages(images, totalImages, animation.startTime, animation.endTime);
 
 				// Check if we have sufficient images for this GIF type
-				if (hasMinimumImages(animation.gifType as AnimationType, selectedImageKeys.length)) {
+				if (hasMinimumImages(animation.gifType as AnimationType, selectedImages.length)) {
 					// Update animation with selected images and set status to pending
-					await repo.animationQueue.updateAnimationWithImages(animation.id, 'pending', selectedImageKeys);
+					await repo.animationQueue.updateAnimationWithImages(animation.id, 'pending', selectedImages.map(x => x.objectName));
 					pendingCount++;
 				} else {
 					// Mark as failed due to insufficient images
-					const errorMessage = `Insufficient images: found ${selectedImageKeys.length} after desampling from ${imageKeys.length}, required minimum for ${animation.gifType}`;
+					const errorMessage = `Insufficient images: found ${selectedImages.length} after desampling from ${imageKeys.length}, required minimum for ${animation.gifType}`;
 					await repo.animationQueue.updateAnimationWithImages(animation.id, 'failed', [], errorMessage);
 					failedCount++;
 				}

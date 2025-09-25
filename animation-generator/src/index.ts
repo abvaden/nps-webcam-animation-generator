@@ -323,10 +323,22 @@ app.get("config", async (c) => {
 });
 
 app.get('process', async (c) => {
+	const oldLog = console.log;
+	const logs = new Array<string>();
+	console.log = (...args) => {
+		logs.push(JSON.stringify(args));
+		oldLog.apply(console, args);
+	}
 
 	const repo = RepositoryFactory(c.env);
 
 	await processAllWebcams(repo, c.env.STORAGE_BUCKET);
+	await prepareAnimationsForPendingQueue(repo, new Date());
+
+	return c.json({
+		success: true,
+		logs: logs,
+	});
 })
 
 // Gallery API endpoints

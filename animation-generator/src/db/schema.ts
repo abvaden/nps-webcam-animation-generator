@@ -1,5 +1,6 @@
 import { sqliteTable, AnySQLiteColumn, index, integer, text, numeric, foreignKey, blob } from "drizzle-orm/sqlite-core"
   import { sql } from "drizzle-orm"
+import { AnimationType } from "@/types";
 
 export const webcams = sqliteTable("webcams", {
 	id: integer().primaryKey({ autoIncrement: true }),
@@ -73,7 +74,7 @@ export const gifCreationQueue = sqliteTable("gif_creation_queue", {
 	id: integer().primaryKey({ autoIncrement: true }),
 	webcamId: integer("webcam_id").notNull().references(() => webcams.id),
 	referenceId: text("reference_id").notNull(),
-	gifType: text("gif_type").notNull(),
+	gifType: text("gif_type").$type<AnimationType>().notNull(),
 	scheduledTime: numeric("scheduled_time").notNull(),
 	imageList: text("image_list", { mode: 'json' }).$type<string[]>().notNull(),
 	status: text().default("pending"),

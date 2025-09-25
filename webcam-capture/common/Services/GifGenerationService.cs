@@ -112,8 +112,8 @@ public class GifGenerationService
             // Order image files by frame
             for (var i = 0; i < gifToCreate.imageList.Count; i++)
             {
-                var frameFilePath = Path.Combine(frameDir, $"frame_{i:3}.jpg");
-                var imageName = gifToCreate.imageList[i].Substring(gifToCreate.imageList[i].LastIndexOf("/"));
+                var frameFilePath = Path.Combine(frameDir, $"frame_{i:D3}.jpg");
+                var imageName = gifToCreate.imageList[i].Substring(gifToCreate.imageList[i].LastIndexOf("/") + 1);
                 var sourceImagePath = imageFiles.Single(x => x.EndsWith(imageName));
 
                 if (string.IsNullOrEmpty(sourceImagePath))
