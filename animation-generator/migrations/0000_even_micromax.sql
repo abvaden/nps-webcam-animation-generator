@@ -1,26 +1,6 @@
 -- Current sql file was generated after introspecting the database
 -- If you want to run this migration please uncomment this code before executing migrations
 
-/*
-CREATE TABLE `webcams_2` (
-	`id` integer PRIMARY KEY AUTOINCREMENT,
-	`name` text NOT NULL,
-	`url` text NOT NULL,
-	`enabled` numeric DEFAULT (TRUE),
-	`interval_minutes` integer DEFAULT 1,
-	`location` text,
-	`national_park` text,
-	`timezone` text DEFAULT 'America/Denver',
-	`last_image_hash` text,
-	`last_active_at` numeric,
-	`created_at` numeric DEFAULT (CURRENT_TIMESTAMP),
-	`updated_at` numeric DEFAULT (CURRENT_TIMESTAMP),
-	`lat_lon` text,
-	`display_name` text
-);
-*/
-
-
 CREATE TABLE `webcams` (
 	`id` integer PRIMARY KEY AUTOINCREMENT,
 	`name` text NOT NULL,
