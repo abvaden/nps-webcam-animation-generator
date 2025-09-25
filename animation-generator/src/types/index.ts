@@ -1,3 +1,5 @@
+import { IRepository } from "@/db/repositories";
+
 // Environment interface for Cloudflare Worker
 export interface Env {
   STORAGE_BUCKET: R2Bucket;
@@ -34,6 +36,13 @@ export interface AnimationQueueEntry {
 	start_time: number;
 	end_time: number;
 	gif_storage_key: string | null; // S3 key for uploaded GIF
+}
+
+export interface RetentionPolicy
+{
+	name: string;
+
+	apply(repo: IRepository, start: number, end: number): Promise<void>;
 }
 
 // GIF types for queue entries

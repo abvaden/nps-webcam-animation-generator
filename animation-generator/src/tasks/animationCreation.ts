@@ -34,8 +34,6 @@ export function createAnimationEntry(
 		referenceId = `${webcam.id}_${animationType}_${dateStr}`;
 	}
 
-	console.log('referenceId : ' + referenceId);
-
 	// Generate storage key for the animation
 	const storageKey = generateAnimationStorageKey(
 		webcam.nationalPark || 'unknown',
@@ -100,8 +98,7 @@ export async function createTodaysAnimations(repo: IRepository, dateString: stri
 
 	// Utc
 	const now = new Date(`${dateString}T03:00:00Z`);
-
-	console.log(`Creating daily animations for ${now.getUTCFullYear()}-${now.getUTCMonth()}-${now.getUTCDate()}`);
+	console.log(`Creating daily animations for ${now.getUTCFullYear()}-${(now.getUTCMonth() + 1).toFixed(0).padStart(2, '0')}-${now.getUTCDate()}`);
 
 	for (const webcam of webcams) {
 		// Skip webcams without location data
@@ -117,11 +114,11 @@ export async function createTodaysAnimations(repo: IRepository, dateString: stri
 
 
 		// Calculate solar times for "today" in terms of the webcams timezone
-		const webcamNow = new Date(new Date(`${dateString}T03:00:00`).toLocaleString("en-US", {timeZone: webcam.timezone}));
-		console.log('Webcam startOfDay Time : ' + webcamNow.toISOString());
+		const webcamDailyOffset = DateTime.fromJSDate(now).setZone(webcam.timezone).offset;
+		const webcamStartOfDay = new Date(now.valueOf() - (webcamDailyOffset * 60 * 1000));
+		console.log('Webcam startOfDay Time : ' + webcamStartOfDay.toISOString());
 
-		// const webcamNow = DateTime.fromFormat(`${dateString} 03:00:00`, 'yyyy-MM-dd HH:mm:ss').setZone(webcam.timezone);
-		const solarTimes = calculateWebcamSolarTimes(webcam.latLon, webcamNow.valueOf());
+		const solarTimes = calculateWebcamSolarTimes(webcam.latLon, webcamStartOfDay.valueOf());
 		if (!solarTimes) {
 			console.log(`Could not calculate solar times for ${webcam.name}`);
 			continue;

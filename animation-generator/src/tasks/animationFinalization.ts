@@ -41,12 +41,10 @@ export async function prepareAnimationsForPendingQueue(repo: IRepository, now: D
 					throw new Error('start or end time not defined');
 				}
 
-				// Convert start_time and end_time from seconds to milliseconds for getImagesForTimeRange
-				const startTimeMs = animation.startTime * 1000;
-				const endTimeMs = animation.endTime * 1000;
 
 				// Query images table for this webcam within the time range
-				const imageKeys = await repo.imageRepository.getImagesForTimeRange(webcam, startTimeMs, endTimeMs);
+				const images = await repo.imageRepository.getImagesForTimeRange(webcam, animation.startTime, animation.endTime);
+				const imageKeys = images.map(x => x.objectName);
 
 				// We should calculate the total number of images in the animation / animation based off the fixed framerate of 15 fps and the length of time
 				// the animation should play for i.e. animation.totalTime

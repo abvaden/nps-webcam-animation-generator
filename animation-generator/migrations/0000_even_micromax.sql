@@ -1,7 +1,7 @@
 -- Current sql file was generated after introspecting the database
 -- If you want to run this migration please uncomment this code before executing migrations
 
-
+/*
 CREATE TABLE `webcams_2` (
 	`id` integer PRIMARY KEY AUTOINCREMENT,
 	`name` text NOT NULL,
@@ -18,8 +18,9 @@ CREATE TABLE `webcams_2` (
 	`lat_lon` text,
 	`display_name` text
 );
+*/
 
-/*
+
 CREATE TABLE `webcams` (
 	`id` integer PRIMARY KEY AUTOINCREMENT,
 	`name` text NOT NULL,
@@ -114,12 +115,4 @@ CREATE TABLE `images` (
 	`object_name` text NOT NULL,
 	FOREIGN KEY (`webcam_id`) REFERENCES `webcams`(`id`) ON UPDATE no action ON DELETE no action
 );
---> statement-breakpoint
-CREATE TABLE `d1_migrations` (
-	`id` integer PRIMARY KEY AUTOINCREMENT,
-	`name` text,
-	`applied_at` numeric DEFAULT (current_timestamp) NOT NULL
-);
-
-*/
 

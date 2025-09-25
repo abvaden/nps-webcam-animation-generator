@@ -5,7 +5,7 @@ import type { Image, WebcamDto } from '../schema';
 
 export interface IImageRepository {
   addImageToDatabase(webcamId: number, timestamp: number, objectName: string): Promise<boolean>;
-  getImagesForTimeRange(webcam: WebcamDto, startTime: number, endTime: number): Promise<string[]>;
+  getImagesForTimeRange(webcam: WebcamDto, startTime: number, endTime: number): Promise<Image[]>;
   getImageById(imageId: number): Promise<Image | null>;
   getImagesByWebcamId(webcamId: number, limit?: number, offset?: number): Promise<Image[]>;
   getLatestImageForWebcam(webcamId: number): Promise<Image | null>;
@@ -14,6 +14,7 @@ export interface IImageRepository {
   getImagesInDateRange(startDate: Date, endDate: Date, webcamId?: number): Promise<Image[]>;
   deleteImage(imageId: number): Promise<boolean>;
   updateImageObjectName(imageId: number, newObjectName: string): Promise<boolean>;
+  putImage(image: Image): Promise<boolean>;
 }
 
 export class ImageRepository implements IImageRepository {
@@ -44,14 +45,14 @@ export class ImageRepository implements IImageRepository {
     webcam: WebcamDto,
     startTime: number,
     endTime: number
-  ): Promise<string[]> {
+  ): Promise<Image[]> {
     try {
       // Convert millisecond timestamps to seconds for database query
-      const startTimeSeconds = Math.floor(startTime / 1000);
-      const endTimeSeconds = Math.floor(endTime / 1000);
+      const startTimeSeconds = Math.floor(startTime);
+      const endTimeSeconds = Math.floor(endTime);
 
       const result = await this.db
-        .select({ objectName: images.objectName })
+        .select()
         .from(images)
         .where(
           and(
@@ -62,11 +63,7 @@ export class ImageRepository implements IImageRepository {
         )
         .orderBy(asc(images.timeStamp));
 
-      const imageKeys = result.map(row => row.objectName);
-
-      console.log(`Found ${imageKeys.length} images for webcam ${webcam.name} (ID: ${webcam.id}) in time range ${new Date(startTime).toISOString()} to ${new Date(endTime).toISOString()}`);
-
-      return imageKeys;
+      return result;
     } catch (error) {
       console.error('Failed to get images for time range:', error);
       return [];
@@ -235,6 +232,20 @@ export class ImageRepository implements IImageRepository {
       return true;
     } catch (error) {
       console.error('Failed to update image object name:', error);
+      return false;
+    }
+  }
+
+  async putImage(image: Image): Promise<boolean> {
+    try {
+      await this.db
+        .update(images)
+        .set(image)
+        .where(eq(images.id, image.id));
+
+      return true;
+    } catch (error) {
+      console.error('Failed to update image :', error);
       return false;
     }
   }

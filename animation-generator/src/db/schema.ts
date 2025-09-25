@@ -99,6 +99,8 @@ export const images = sqliteTable("images", {
 	webcamId: integer("webcam_id").notNull().references(() => webcams.id),
 	timeStamp: integer("time_stamp").notNull(),
 	objectName: text("object_name").notNull(),
+	retentionPolicy: text('retention_policy', { mode: 'json'}).$type<string[]>(),
+	retentionPolicySettings: text('retention_policy_settings', { mode: 'json' })
 });
 
 export const d1Migrations = sqliteTable("d1_migrations", {
