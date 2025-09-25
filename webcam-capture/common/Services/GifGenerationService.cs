@@ -90,28 +90,46 @@ public class GifGenerationService
     private async Task<bool> ProcessSingleGifAsync(Gif gifToCreate)
     {
         string? tempDir = null;
-        
+        string? frameDir = null;
+
         try
         {
             _logger.LogInformation($"Downloading {gifToCreate.imageList.Count} images from S3...");
-            
+
             // Create temporary directory for processing
             tempDir = _fileSystemProvider.CreateTempDirectory($"gif_processing_{gifToCreate.referenceId}");
-            
+
             // Download images directly from S3
-            var imageFiles = await _s3Service.DownloadImagesAsync(gifToCreate.imageList, tempDir);
-            
+            var imageFiles = await _s3Service.DownloadImagesAsync(gifToCreate.imageList.Distinct().ToList(), tempDir);
             if (imageFiles.Count == 0)
             {
                 _logger.LogError($"No images were successfully downloaded for GIF: {gifToCreate.referenceId}");
                 return false;
             }
 
+            frameDir = _fileSystemProvider.CreateTempDirectory($"{gifToCreate.referenceId}_frames");
+
+            // Order image files by frame
+            for (var i = 0; i < gifToCreate.imageList.Count; i++)
+            {
+                var frameFilePath = Path.Combine(frameDir, $"frame_{i:3}.jpg");
+                var imageName = gifToCreate.imageList[i].Substring(gifToCreate.imageList[i].LastIndexOf("/"));
+                var sourceImagePath = imageFiles.Single(x => x.EndsWith(imageName));
+
+                if (string.IsNullOrEmpty(sourceImagePath))
+                {
+                    _logger.LogError("Could not find image to convert to frame after download");
+                    return false;
+                }
+
+                File.Copy(sourceImagePath, frameFilePath);
+            }
+
             _logger.LogInformation($"Successfully downloaded {imageFiles.Count} images. Creating GIF...");
-            
+
             // Create GIF from downloaded images
-            var outputPath = await _gifProcessingService.CreateGifFromImageFilesAsync(imageFiles, gifToCreate.referenceId);
-            
+            var outputPath = await _gifProcessingService.CreateGifFromImageFilesAsync(frameDir, gifToCreate.referenceId);
+
             if (outputPath == null)
             {
                 _logger.LogError($"Failed to create GIF file for {gifToCreate.referenceId}");
@@ -152,6 +170,11 @@ public class GifGenerationService
             if (tempDir != null)
             {
                 _fileSystemProvider.CleanupPath(tempDir);
+            }
+
+            if (frameDir != null)
+            {
+                _fileSystemProvider.CleanupPath(frameDir);
             }
         }
     }

@@ -57,7 +57,8 @@ public class S3Service
         for (int i = 0; i < imageKeys.Count; i++)
         {
             var imageKey = imageKeys[i];
-            var tempImagePath = Path.Combine(tempDirectory, $"frame_{i:D3}.jpg");
+            var imageTimestamp = imageKey.Substring(imageKey.LastIndexOf("/"));
+            var tempImagePath = Path.Combine(tempDirectory, $"{imageTimestamp}");
             
             if (await DownloadImageAsync(imageKey, tempImagePath))
             {

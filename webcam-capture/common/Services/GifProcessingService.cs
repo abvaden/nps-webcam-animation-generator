@@ -26,16 +26,10 @@ public class GifProcessingService
     /// <param name="imageFiles">List of image file paths</param>
     /// <param name="referenceId">Reference ID for the GIF</param>
     /// <returns>Path to the created GIF file, or null if creation failed</returns>
-    public async Task<string?> CreateGifFromImageFilesAsync(List<string> imageFiles, string referenceId)
+    public async Task<string?> CreateGifFromImageFilesAsync(string frameDirectory, string referenceId)
     {
         try
         {
-            if (imageFiles.Count == 0)
-            {
-                _logger.LogError($"No image files provided for GIF: {referenceId}");
-                return null;
-            }
-
             // Ensure FFmpeg is configured
             if (!_ffmpegProvider.ConfigureFFmpeg())
             {
@@ -43,17 +37,11 @@ public class GifProcessingService
                 return null;
             }
 
-            // Calculate frame rate for 4-second duration
-            var frameRate = Math.Min(1, imageFiles.Count / 4.0); // Ensure at least 1 FPS
-
             // Output GIF path
             var outputPath = _fileSystemProvider.GetOutputPath($"{referenceId}.mp4");
 
-            _logger.LogInformation($"Creating GIF with {imageFiles.Count} frames at {frameRate:F2} FPS for 4-second duration");
-
             // Get the directory containing the image files
-            var tempDir = Path.GetDirectoryName(imageFiles[0]);
-            if (string.IsNullOrEmpty(tempDir))
+            if (string.IsNullOrEmpty(frameDirectory))
             {
                 _logger.LogError($"Could not determine temp directory for GIF: {referenceId}");
                 return null;
@@ -61,7 +49,7 @@ public class GifProcessingService
 
             // Create GIF using FFMpegCore
             await FFMpegArguments
-                .FromFileInput(Path.Combine(tempDir, "frame_%03d.jpg"), false)
+                .FromFileInput(Path.Combine(frameDirectory, "frame_%03d.jpg"), false)
                 .OutputToFile(outputPath, true, options => options
                     .WithVideoBitrate(2315)
                     .WithAudioBitrate(0)
