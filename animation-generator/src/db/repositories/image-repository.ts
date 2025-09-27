@@ -1,11 +1,12 @@
-import { eq, and, gte, lte, asc } from 'drizzle-orm';
+import { eq, and, gte, lte, asc, or } from 'drizzle-orm';
 import type { Database } from '../connection';
 import { images, webcams } from '../schema';
 import type { Image, WebcamDto } from '../schema';
 
 export interface IImageRepository {
   addImageToDatabase(webcamId: number, timestamp: number, objectName: string): Promise<boolean>;
-  getImagesForTimeRange(webcam: WebcamDto, startTime: number, endTime: number): Promise<Image[]>;
+  getAllImagesForTimeRangeWoRetentionPolicy(startTime: number, endTime: number): Promise<Image[]>;
+	getImagesForTimeRange(webcam: WebcamDto, startTime: number, endTime: number): Promise<Image[]>;
   getImageById(imageId: number): Promise<Image | null>;
   getImagesByWebcamId(webcamId: number, limit?: number, offset?: number): Promise<Image[]>;
   getLatestImageForWebcam(webcamId: number): Promise<Image | null>;
@@ -249,4 +250,22 @@ export class ImageRepository implements IImageRepository {
       return false;
     }
   }
+
+	async getAllImagesForTimeRangeWoRetentionPolicy(startTime: number, endTime: number): Promise<Image[]> {
+		try {
+      const result = await this.db
+        .select()
+				.from(images)
+				.where(and(
+            or(eq(images.retentionPolicy, null), eq(images.retentionPolicy, [])),
+            gte(images.timeStamp, startTime),
+            lte(images.timeStamp, endTime)
+          ));
+
+      return result;
+    } catch (error) {
+      console.error('Failed to find images :', error);
+      return [];
+    }
+	}
 }

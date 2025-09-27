@@ -123,7 +123,7 @@ async function captureWebCamImage(webcam: WebcamDto, repo: IRepository, r2Tracke
 	// Save timestamped history if enabled
 	const unixTimestamp = Math.floor(Date.now() / 1000); // Unix timestamp in seconds
 	const ext = guessExt(contentType);
-	const historyKey = `images/romo/${webcam.name}/${unixTimestamp}${ext}`;
+	const historyKey = `images/${webcam.nationalPark}/${webcam.name}/${unixTimestamp}${ext}`;
 
 	// Save timestamped history (Class A operation)
 	await r2Tracker.putObject(historyKey, body, {

@@ -4,6 +4,7 @@ import { Hono } from 'hono';
 import { RepositoryFactory } from '@/db/repositories/index';
 import { cleanupOldAnimations, createTodaysAnimations, prepareAnimationsForPendingQueue, processAllWebcams } from './tasks';
 import { AnimationQueueEntry } from './types';
+import { applyRetentionPolicies } from './tasks/applyRetentionPolicies';
 
 const app = new Hono<{ Bindings: Env }>();
 (app as any).scheduled = (_event: ScheduledEvent, env: Env, ctx: ExecutionContext) => {
@@ -340,6 +341,43 @@ app.get('process', async (c) => {
 		logs: logs,
 	});
 })
+
+app.get('images/retention/apply', async (c) => {
+	const repo = RepositoryFactory(c.env);
+
+	// Get optional date parameter (defaults to today)
+	const dateParam = c.req.query('date');
+	let dateValue;
+
+
+
+	if (dateParam) {
+		// Validate date format (YYYY-MM-DD)
+		const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+		if (!dateRegex.test(dateParam)) {
+			return c.json({
+				success: false,
+				error: 'Invalid date format',
+				message: 'Date must be in YYYY-MM-DD format'
+			}, 400);
+		}
+
+		dateValue = dateParam;
+	} else {
+		const now = new Date(); // Use current date
+		dateValue = `${now.getUTCFullYear()}-${now.getUTCMonth().toFixed(0).padStart(2, '0')}-${(now.getUTCDate() + 1).toFixed(0).padStart(2, '0')}`;
+	}
+
+	const oldLog = console.log;
+	const logs = new Array<string>();
+	console.log = (...args) => {
+		logs.push(JSON.stringify(args));
+		oldLog.apply(console, args);
+	}
+
+	await applyRetentionPolicies(repo, c.env.STORAGE_BUCKET, dateValue);
+	return c.json({success: true, logs: logs});
+});
 
 // Gallery API endpoints
 app.get("gallery/parks", async (c) => {
