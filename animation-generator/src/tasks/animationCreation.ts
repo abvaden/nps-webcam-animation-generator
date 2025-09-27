@@ -192,7 +192,7 @@ export async function createTodaysAnimations(repo: IRepository, dateString: stri
 					const hourlyAnimation = createAnimationEntry(
 						webcam,
 						'hourly',
-						new Date(nextHour.getTime() + (5 * 60 * 1000)), // Schedule 5 minutes after hour ends
+						new Date(nextHour.getTime() + (1 * 60 * 1000)), // Schedule 5 minutes after hour ends
 						Math.floor(currentHour.getTime() / 1000),
 						Math.floor(nextHour.getTime() / 1000)
 					);
