@@ -7,7 +7,11 @@ public class ConsoleFileSystemProvider : IFileSystemProvider
     public string CreateTempDirectory(string identifier)
     {
         var tempDir = Path.Combine(Path.GetTempPath(), identifier);
-        Directory.CreateDirectory(tempDir);
+        if (!Directory.Exists(tempDir))
+        {
+            Directory.CreateDirectory(tempDir);    
+        }
+        
         return tempDir;
     }
 

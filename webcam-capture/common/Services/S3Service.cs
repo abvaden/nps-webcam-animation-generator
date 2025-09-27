@@ -28,10 +28,10 @@ public class S3Service
         try
         {
             _logger.LogInformation($"Downloading image: {imageKey}");
-            
+
             var objResult = await _s3Client.GetObjectAsync(_bucketName, imageKey);
             await objResult.WriteResponseStreamToFileAsync(localPath, false, CancellationToken.None);
-            
+
             _logger.LogInformation($"Successfully downloaded: {imageKey}");
             return true;
         }
@@ -51,15 +51,23 @@ public class S3Service
     public async Task<List<string>> DownloadImagesAsync(List<string> imageKeys, string tempDirectory)
     {
         var downloadedFiles = new List<string>();
-        
+        var downloadedFilesCount = 0;
+
         _logger.LogInformation($"Downloading {imageKeys.Count} images from S3...");
-        
+
         for (int i = 0; i < imageKeys.Count; i++)
         {
             var imageKey = imageKeys[i];
             var imageTimestamp = imageKey.Substring(imageKey.LastIndexOf("/") + 1);
             var tempImagePath = Path.Combine(tempDirectory, $"{imageTimestamp}");
-            
+
+            if (File.Exists(tempImagePath))
+            {
+                downloadedFiles.Add(tempImagePath);
+                _logger.LogInformation($"{imageKey} already exists locally");
+                continue;
+            }
+
             if (await DownloadImageAsync(imageKey, tempImagePath))
             {
                 downloadedFiles.Add(tempImagePath);
@@ -68,10 +76,13 @@ public class S3Service
             else
             {
                 _logger.LogError($"Failed to download frame {i + 1}/{imageKeys.Count}: {imageKey}");
+                throw new Exception($"Failed to download frame {i + 1}/{imageKeys.Count}: {imageKey}");
             }
+
+            downloadedFilesCount++;
         }
-        
-        _logger.LogInformation($"Successfully downloaded {downloadedFiles.Count}/{imageKeys.Count} images");
+
+        _logger.LogInformation($"Successfully downloaded {downloadedFilesCount} images");
         return downloadedFiles;
     }
 
@@ -86,7 +97,7 @@ public class S3Service
         try
         {
             _logger.LogInformation($"Uploading GIF to S3: {s3Key}");
-            
+
             await _s3Client.PutObjectAsync(new PutObjectRequest
             {
                 BucketName = _bucketName,
@@ -95,7 +106,7 @@ public class S3Service
                 DisablePayloadSigning = true,
                 DisableDefaultChecksumValidation = true,
             });
-            
+
             _logger.LogInformation($"Successfully uploaded GIF: {s3Key}");
             return true;
         }

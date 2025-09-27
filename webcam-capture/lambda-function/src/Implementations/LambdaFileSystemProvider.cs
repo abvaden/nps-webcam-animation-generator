@@ -7,6 +7,10 @@ public class LambdaFileSystemProvider : IFileSystemProvider
     public string CreateTempDirectory(string identifier)
     {
         var tempDir = Path.Combine("/tmp", identifier);
+        if (!Directory.Exists(tempDir))
+        {
+            Directory.CreateDirectory(tempDir);    
+        }
         Directory.CreateDirectory(tempDir);
         return tempDir;
     }

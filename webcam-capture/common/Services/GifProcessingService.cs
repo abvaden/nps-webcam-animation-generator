@@ -56,8 +56,8 @@ public class GifProcessingService
                     .WithFramerate(20)
                     .WithVideoCodec(VideoCodec.LibX264)
                         .WithConstantRateFactor(28)
-                    .WithVariableBitrate(4).WithVideoFilters(filterOptions => filterOptions
-                        .Scale(VideoSize.Hd)))
+                    .WithVariableBitrate(4)
+                    .WithVideoFilters(f => f.Scale(VideoSize.FullHd)))
                 .ProcessAsynchronously();
 
             _logger.LogInformation($"GIF created successfully: {outputPath}");

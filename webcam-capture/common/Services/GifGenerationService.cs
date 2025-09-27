@@ -97,15 +97,10 @@ public class GifGenerationService
             _logger.LogInformation($"Downloading {gifToCreate.imageList.Count} images from S3...");
 
             // Create temporary directory for processing
-            tempDir = _fileSystemProvider.CreateTempDirectory($"gif_processing_{gifToCreate.referenceId}");
+            tempDir = _fileSystemProvider.CreateTempDirectory($"images");
 
             // Download images directly from S3
             var imageFiles = await _s3Service.DownloadImagesAsync(gifToCreate.imageList.Distinct().ToList(), tempDir);
-            if (imageFiles.Count == 0)
-            {
-                _logger.LogError($"No images were successfully downloaded for GIF: {gifToCreate.referenceId}");
-                return false;
-            }
 
             frameDir = _fileSystemProvider.CreateTempDirectory($"{gifToCreate.referenceId}_frames");
 
@@ -125,7 +120,7 @@ public class GifGenerationService
                 File.Copy(sourceImagePath, frameFilePath);
             }
 
-            _logger.LogInformation($"Successfully downloaded {imageFiles.Count} images. Creating GIF...");
+            _logger.LogInformation($"Successfully fetched {imageFiles.Count} images. Creating GIF...");
 
             // Create GIF from downloaded images
             var outputPath = await _gifProcessingService.CreateGifFromImageFilesAsync(frameDir, gifToCreate.referenceId);
@@ -167,10 +162,10 @@ public class GifGenerationService
         finally
         {
             // Clean up temporary directory
-            if (tempDir != null)
-            {
-                _fileSystemProvider.CleanupPath(tempDir);
-            }
+            // if (tempDir != null)
+            // {
+            //     _fileSystemProvider.CleanupPath(tempDir);
+            // }
 
             if (frameDir != null)
             {
